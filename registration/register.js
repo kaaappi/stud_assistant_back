@@ -1,13 +1,17 @@
 import express from "express";
-import pool from "msnodesqlv8";
 import bcrypt from "bcrypt";
+import pkg from 'pg';
+const { Pool } = pkg;
+import * as dotenv from "dotenv";
+dotenv.config({
+  path: "${__dirname}/../.env",
+});
 
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 const router = express.Router();
 
-const connectionString =
-  "server=.\\SQLEXPRESS;Database=WorkingLoads;Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}";
-
-// POST /api/register
 router.post("/register", async (req, res) => {
   const { username, password } = req.body;
 
@@ -23,17 +27,14 @@ router.post("/register", async (req, res) => {
       SELECT * FROM Registration WHERE Username = '${username}'
     `;
 
-
-
-
     const getRows = async () => {
       return new Promise((resolve, reject) => {
-        pool.query(connectionString, queryExistingUser, (err, rows) => {
+        pool.query(queryExistingUser, (err, result) => {
           if (err) {
             console.error(err);
             reject(err);
           } else {
-            resolve(rows);
+            resolve(result.rows);
           }
         });
       });
@@ -51,7 +52,7 @@ router.post("/register", async (req, res) => {
           const queryInsertUser = `
         INSERT INTO Registration (username, password) VALUES ('${username}', '${hashedPassword}')
       `;
-          pool.query(connectionString, queryInsertUser, (errInsert, result) => {
+          pool.query( queryInsertUser, (errInsert, result) => {
             if (errInsert) {
               console.error(errInsert);
               return res.status(500).json({ message: 'Error adding user' });

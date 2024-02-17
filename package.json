@@ -8,10 +8,9 @@
     "node": "18.x"
   },
   "scripts": {
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -21,7 +20,6 @@
     "dotenv": "^16.4.4",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
-    "msnodesqlv8": "^4.1.1",
     "pg": "^8.11.3"
   },
   "devDependencies": {
